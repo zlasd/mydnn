@@ -1,4 +1,4 @@
-# MyDnn
+# MyDNN
 
 This repository contains my implementations of deep neural networks.
 
@@ -6,7 +6,7 @@ I will also use the networks to solve the CIFAR-10 classification problem in ter
 
 ## Networks
 
-As a new project, it currently has not implementation yet.
+As a new project, it currently has no implementation yet.
 
 ## CIFAR-10
 
@@ -33,3 +33,4 @@ Use the script  ```dataset_preprocess.py``` to refine directories structures. Th
 1. add config class
 2. add data access object
 3. add a benchmark model
+4. implement Inception
