@@ -26,7 +26,6 @@ The original directories stucture is as follow:
 |   |   +--- ...
 ```
 
-Use the script  ```dataset_preprocess.py``` to refine directories structures. Then the images will be grouped by classes.
 
 ## TODO
 
