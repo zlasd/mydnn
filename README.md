@@ -6,7 +6,7 @@ I will also use the networks to solve the CIFAR-10 classification problem in ter
 
 ## Networks
 
-As a new project, it currently has no implementation yet.
+It currently only has a softmax model as benchmark.
 
 ## CIFAR-10
 
@@ -29,7 +29,5 @@ The original directories stucture is as follow:
 
 ## TODO
 
-1. add config class
-2. add data access object
-3. add a benchmark model
-4. implement Inception
+1. implement CNN
+2. implement Inception

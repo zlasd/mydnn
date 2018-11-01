@@ -11,6 +11,8 @@ from util.config import Config
 class SoftmaxConfig(Config):
     NAME = "softmax"
     LEARNING_RATE = 0.001
+    EPOCH = 1000
+    SAVE_PER_EPOCH = 50
 
 
 def softmax(X, config):

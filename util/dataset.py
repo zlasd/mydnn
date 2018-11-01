@@ -54,6 +54,10 @@ class CIFAR10(Dataset):
         self.train_X, self.valid_X, self.train_y, self.valid_y \
                 = train_test_split(train_X, train_y, test_size=0.2)
 
+        print('image shapes: {}'.format(self.train_X[0].shape))
+        print('train sample: {}'.format(self.train_y.shape[0]))
+        print('valid sample: {}'.format(self.valid_y.shape[0]))
+
 
     def discardTrainData(self):
         """ Discard training data to reduce memory consumption.
@@ -83,6 +87,10 @@ class CIFAR10(Dataset):
         self.test_X = test_X
         self.test_y = test_y
 
+        print('image shapes: {}'.format(self.test_X[0].shape))
+        print('test sample: {}'.format(self.test_y.shape[0]))
+
+
 
     def discardTestData(self):
         """ Discard test data
@@ -105,7 +113,6 @@ class CIFAR10(Dataset):
         else:
             idx = np.random.choice(self.test_y.shape[0], bs)
             return self.test_X[idx], self.test_y[idx]
-
 
 
     def _loadClasses(self):

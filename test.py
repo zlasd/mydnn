@@ -4,6 +4,8 @@ import time
 import shutil
 
 from util.dataset import CIFAR10
+from models.manager import Manager
+from models.softmax import SoftmaxConfig, softmax
 
 def testLoadDataset():
     print('test load datasets...')
@@ -18,8 +20,18 @@ def testLoadDataset():
     print('valid sample: {}'.format(cifar10.valid_y.shape[0]))
 
 
+def testRunTraining():
+    conf = SoftmaxConfig()
+    conf.EPOCH = 20
+    conf.SAVE_PER_EPOCH = 5
+    cifar10 = CIFAR10('data/')
+    manager = Manager(conf, cifar10, softmax)
+
+    manager.compile()
+    manager.training()
+
 def test():
-    testLoadDataset()
+    testRunTraining()
 
 
 if __name__ == '__main__':

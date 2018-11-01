@@ -8,12 +8,14 @@ class Config(object):
     that need to be changed.
     """
     NAME = "model"
-    LOG_DIR = "tensorboard"
+    CHECKPOINT_DIR = "checkpoints"
 
     BATCH_SIZE = 128
-    EPOCH = 100
+    EPOCH = 10
+    PRETRAINED_EPOCH = 0
     STEPS_PER_EPOCH = 1000
     VALIDATION_STEP = 50
+    SAVE_PER_EPOCH = 5
 
     NUM_CLASSES = 10
     LEARNING_RATE = 0.01

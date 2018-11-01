@@ -1,4 +1,5 @@
 
+import os
 
 import tensorflow as tf
 
@@ -10,14 +11,13 @@ class BaseManager(object):
         self.config = config
         self.dataset = dataset
         self.graph = tf.Graph()
-        self.sess = tf.Session(graph=self.graph)
 
 
 
 class Manager(BaseManager):
     """ Task manager for training and evaluatiing process.
     """
-    def __init__(self, config, dataset, model=None):
+    def __init__(self, config, dataset, model):
         """ config : utils.config.Config
             dataset : utils.dataset.Dataset
             model: function
@@ -41,13 +41,19 @@ class Manager(BaseManager):
                 y_ = tf.one_hot(self.tensor_y, self.config.NUM_CLASSES)
                 loss = tf.losses.log_loss(y_, y)
                 self.loss = loss
-            else:
-                equals = tf.equal(tf.arg_max(y, 1), tf.arg_max(y_, 1))
-                self.accuracy = tf.reduce_mean(tf.cast(equals, tf.float32))
+
+            equals = tf.equal(tf.arg_max(y, 1), tf.argmax(y_, 1))
+            self.accuracy = tf.reduce_mean(tf.cast(equals, tf.float32))
 
 
     def compile(self, optimizer=None):
-        if self.config.MODE != "training": 
+        """ load data and create seesion.
+        """
+        assert self.config.MODE in ["training", "inference"]
+
+        self.sess = tf.Session(graph=self.graph)
+        
+        if self.config.MODE == "inference": 
             self.dataset.loadTestData()
             return
         
@@ -63,12 +69,28 @@ class Manager(BaseManager):
     def loadWeights(self, path):
         """ load model weights from file.
         """
-        pass
+        with self.graph.as_default():
+            try:
+                name = path.split('/')[-1]
+                epoch = int(name.split('-')[-1])
+                self.config.PRETRAINED_EPOCH = epoch
+            except Exception:
+                pass
+            tf.train.Saver().restore(self.sess, path)
 
-    def saveWeigths(self, path):
+
+    def saveWeights(self, epoch):
         """ save model weights to file.
         """
-        pass
+        epoch += self.config.PRETRAINED_EPOCH
+        path = '{}/{}-{}'.format(self.config.CHECKPOINT_DIR,
+                                         self.config.NAME, epoch)
+        path = os.path.join(os.getcwd(), path)
+
+        with self.graph.as_default():
+            save_path = tf.train.Saver().save(self.sess, path)
+        print("Model saved in: {}".format(save_path))
+
 
     def training(self):
         """ training model using model loss.
@@ -76,6 +98,7 @@ class Manager(BaseManager):
         config = self.config
 
         for i in range(config.EPOCH):
+            print("Epoch {} training...".format(i+1))
             for j in range(config.STEPS_PER_EPOCH):
                 train_batch_X, train_batch_y = self.dataset.getBatch(
                                                         self.config.BATCH_SIZE)
@@ -93,9 +116,10 @@ class Manager(BaseManager):
                     self.tensor_y: valid_batch_y
                 })
                 mean_acc += valid_acc
-            print("Epoch {} validation accuracy: {}".format(i, mean_acc))
+            print("Epoch {} validation accuracy: {}".format(i+1, mean_acc))
 
-        tf.train.Saver()
+            if (i+1) % self.config.SAVE_PER_EPOCH == 0:
+                self.saveWeights(i+1)
 
 
     def predict(self, custom_X=None):
