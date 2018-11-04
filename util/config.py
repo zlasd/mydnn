@@ -9,6 +9,7 @@ class Config(object):
     """
     NAME = "model"
     CHECKPOINT_DIR = "checkpoints"
+    TENSORBOARD_DIR = "tensorboard"
 
     BATCH_SIZE = 128
     EPOCH = 10

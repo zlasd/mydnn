@@ -1,6 +1,8 @@
 # custom .gitignore
-.vscode/*
-data/*
+.vscode/
+data/
+checkpoints/
+tensorboard/
 
 # created by github
 #

@@ -17,6 +17,12 @@ class SoftmaxConfig(Config):
 
 def softmax(X, config):
     """ build softmax model
+        Args:
+            X - input placeholder
+            config - Config object
+        Return:
+            logits - model output tensor
+            mid_val - intermediate values that might be used
     """
     X_in =  tf.layers.flatten(X)
 
@@ -26,4 +32,4 @@ def softmax(X, config):
 
     logits = tf.nn.softmax(tf.add(tf.matmul(X_in, W), b))
     
-    return logits
+    return logits, None

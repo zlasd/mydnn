@@ -4,6 +4,16 @@ This repository contains my implementations of deep neural networks.
 
 I will also use the networks to solve the CIFAR-10 classification problem in terms of checking their sanity.
 
+## Requirements
+
+```
+numpy
+matplotlib
+tensorflow
+scikit-learn
+```
+
+
 ## Networks
 
 It currently only has a softmax model as benchmark.

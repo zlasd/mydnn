@@ -17,16 +17,16 @@ class BaseManager(object):
 class Manager(BaseManager):
     """ Task manager for training and evaluatiing process.
     """
-    def __init__(self, config, dataset, model):
+    def __init__(self, config, dataset, model_fn):
         """ config : utils.config.Config
             dataset : utils.dataset.Dataset
             model: function
         """
         super().__init__(config, dataset)
-        self.buildModel(model)
+        self.buildModel(model_fn)
 
 
-    def buildModel(self, model):
+    def buildModel(self, model_fn):
         """ set up model output and model loss.
         """
         with self.graph.as_default():
@@ -34,7 +34,7 @@ class Manager(BaseManager):
                 None, self.dataset.IMAGE_HEIGHT, self.dataset.IMAGE_WIDTH, 3))
             self.tensor_y = tf.placeholder(tf.uint8, shape=(None, ))
 
-            y = model(self.tensor_X, self.config)
+            y, _ = model_fn(self.tensor_X, self.config)
             self.model_out = y
             
             if self.config.MODE == "training":
@@ -63,6 +63,14 @@ class Manager(BaseManager):
             if optimizer is None:
                 optimizer = tf.train.RMSPropOptimizer(self.config.LEARNING_RATE, momentum=0.9)
             self.train_step = optimizer.minimize(self.loss)
+            tf.summary.scalar("log loss", self.loss)
+            tf.summary.histogram("prob", self.model_out)
+            self.summary = tf.summary.merge_all()
+            self.trainWriter = tf.summary.FileWriter(
+                    self.config.TENSORBOARD_DIR+'/train', self.graph)
+            self.testWriter = tf.summary.FileWriter(
+                    self.config.TENSORBOARD_DIR+'/test', self.graph)
+
             self.sess.run(tf.global_variables_initializer())
 
 
@@ -102,20 +110,26 @@ class Manager(BaseManager):
             for j in range(config.STEPS_PER_EPOCH):
                 train_batch_X, train_batch_y = self.dataset.getBatch(
                                                         self.config.BATCH_SIZE)
-                self.sess.run(self.train_step, feed_dict={
-                    self.tensor_X : train_batch_X,
-                    self.tensor_y: train_batch_y
+                summary, _ = self.sess.run([self.summary, self.train_step],
+                    feed_dict={
+                        self.tensor_X : train_batch_X,
+                        self.tensor_y: train_batch_y
                 })
+            
+            self.trainWriter.add_summary(summary, i)
                 
             mean_acc = 0.0
             for j in range(config.VALIDATION_STEP):
                 valid_batch_X, valid_batch_y = self.dataset.getBatch(
                                         self.config.BATCH_SIZE, mode="valid")
-                valid_acc = self.sess.run(self.accuracy, feed_dict={
-                    self.tensor_X : valid_batch_X,
-                    self.tensor_y: valid_batch_y
+                summary, valid_acc = self.sess.run([self.summary, self.accuracy],
+                    feed_dict={
+                        self.tensor_X : valid_batch_X,
+                        self.tensor_y: valid_batch_y
                 })
                 mean_acc += valid_acc
+            
+            self.testWriter.add_summary(summary, i)
             print("Epoch {} validation accuracy: {}".format(i+1, mean_acc))
 
             if (i+1) % self.config.SAVE_PER_EPOCH == 0:
