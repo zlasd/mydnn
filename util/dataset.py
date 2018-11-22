@@ -32,6 +32,9 @@ class CIFAR10(Dataset):
         self._loadClasses()        
         self.IMAGE_HEIGHT = 32
         self.IMAGE_WIDTH = 32
+        self.train_idx = 0
+        self.valid_idx = 0
+        self.test_idx = 0
 
 
     def loadTrainData(self):
@@ -50,6 +53,11 @@ class CIFAR10(Dataset):
             img_class = img_name.split(".")[0].split("_")[1]
             train_X[i] = imread(img_path)
             train_y[i] = self.classes.index(img_class)
+
+        # randomly choose samples
+        rnd_idx = np.random.permutation(train_X.shape[0])
+        train_X = train_X[rnd_idx]
+        train_y = train_y[rnd_idx]
 
         self.train_X, self.valid_X, self.train_y, self.valid_y \
                 = train_test_split(train_X, train_y, test_size=0.2)
@@ -84,8 +92,10 @@ class CIFAR10(Dataset):
             test_X[i] = imread(img_path)
             test_y[i] = self.classes.index(img_class)
             
-        self.test_X = test_X
-        self.test_y = test_y
+        # randomly choose samples
+        rnd_idx = np.random.permutation(test_X.shape[0])
+        self.test_X = test_X[rnd_idx]
+        self.test_y = test_y[rnd_idx]
 
         print('image shapes: {}'.format(self.test_X[0].shape))
         print('test sample: {}'.format(self.test_y.shape[0]))
@@ -100,7 +110,7 @@ class CIFAR10(Dataset):
 
 
     def getBatch(self, bs, mode="train"):
-        """ Sampling a mini-batch from train/valid/test set.
+        """ randomly sampling a mini-batch from train/valid/test set.
         """
         assert mode in ["train", "valid", "test"]
 
@@ -113,6 +123,46 @@ class CIFAR10(Dataset):
         else:
             idx = np.random.choice(self.test_y.shape[0], bs)
             return self.test_X[idx], self.test_y[idx]
+
+
+    def nextBatch(self, bs, mode="train"):
+        """ traverse dataset from the begining
+        """
+        assert mode in ["train", "valid", "test"]
+
+        if mode == "train":
+            start = self.train_idx
+            end = start + bs
+            self.train_idx += bs
+            X = self.train_X
+            y = self.train_y
+        elif mode == "valid":
+            start = self.valid_idx
+            end = start + bs
+            self.valid_idx += bs
+            X = self.valid_X
+            y = self.valid_y
+        else:
+            start = self.test_idx
+            end = start + bs
+            self.test_idx += bs
+            X = self.test_X
+            y = self.test_y
+        return (X[start:end], y[start:end]) \
+                if end <= X.shape[0] else False
+        
+
+    def resetIdx(self, mode="train"):
+        """ reset dataset's index for traverse
+        """
+        assert mode in ["train", "valid", "test"]
+
+        if mode == "train":
+            self.train_idx = 0
+        elif mode == "valid":
+            self.valid_idx = 0
+        else:
+            self.test_idx = 0
 
 
     def _loadClasses(self):

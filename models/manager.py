@@ -107,28 +107,34 @@ class Manager(BaseManager):
 
         for i in range(config.EPOCH):
             print("Epoch {} training...".format(i+1))
-            for j in range(config.STEPS_PER_EPOCH):
-                train_batch_X, train_batch_y = self.dataset.getBatch(
-                                                        self.config.BATCH_SIZE)
+            self.dataset.resetIdx()
+            batch = self.dataset.nextBatch(self.config.BATCH_SIZE)
+            while batch:
+                train_batch_X, train_batch_y = batch
                 summary, _ = self.sess.run([self.summary, self.train_step],
                     feed_dict={
                         self.tensor_X : train_batch_X,
                         self.tensor_y: train_batch_y
                 })
+                batch = self.dataset.nextBatch(self.config.BATCH_SIZE)
             
             self.trainWriter.add_summary(summary, i)
                 
             mean_acc = 0.0
-            for j in range(config.VALIDATION_STEP):
-                valid_batch_X, valid_batch_y = self.dataset.getBatch(
-                                        self.config.BATCH_SIZE, mode="valid")
+            count = 0
+            self.dataset.resetIdx(mode="valid")
+            batch = self.dataset.nextBatch(self.config.BATCH_SIZE, mode="valid")
+            while batch:
+                valid_batch_X, valid_batch_y = batch
                 summary, valid_acc = self.sess.run([self.summary, self.accuracy],
                     feed_dict={
                         self.tensor_X : valid_batch_X,
                         self.tensor_y: valid_batch_y
                 })
                 mean_acc += valid_acc
-            
+                count += 1
+                batch = self.dataset.nextBatch(self.config.BATCH_SIZE, mode="valid")
+            mean_acc /= count
             self.testWriter.add_summary(summary, i)
             print("Epoch {} validation accuracy: {}".format(i+1, mean_acc))
 
