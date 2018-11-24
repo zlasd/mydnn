@@ -30,6 +30,6 @@ def softmax(X, config):
             initializer=random_normal, dtype=tf.float32)
     b = tf.get_variable("b", shape=(config.NUM_CLASSES, ))
 
-    logits = tf.nn.softmax(tf.add(tf.matmul(X_in, W), b))
+    logits = tf.add(tf.matmul(X_in, W), b)
     
     return logits, None

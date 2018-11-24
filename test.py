@@ -6,6 +6,7 @@ import shutil
 from util.dataset import CIFAR10
 from models.manager import Manager
 from models.softmax import SoftmaxConfig, softmax
+from models.googlenet import googlenet, GoogLeNetConfig
 
 def testLoadDataset():
     print('test load datasets...')
@@ -20,7 +21,7 @@ def testLoadDataset():
     print('valid sample: {}'.format(cifar10.valid_y.shape[0]))
 
 
-def testRunTraining():
+def testSoftmax():
     conf = SoftmaxConfig()
     conf.EPOCH = 20
     conf.SAVE_PER_EPOCH = 5
@@ -30,8 +31,22 @@ def testRunTraining():
     manager.compile()
     manager.training()
 
+
+def testGoogLeNet():
+    conf = GoogLeNetConfig()
+    conf.EPOCH = 100
+    conf.SAVE_PER_EPOCH = 10
+    conf.LEARNING_RATE = 1e-2
+    cifar10 = CIFAR10('data/')
+    manager = Manager(conf, cifar10, googlenet)
+
+    manager.compile()
+    manager.training()
+
+
 def test():
-    testRunTraining()
+    # testSoftmax()
+    testGoogLeNet()
 
 
 if __name__ == '__main__':

@@ -22,7 +22,7 @@ class Config(object):
     LEARNING_RATE = 0.01
     PADDING = "SAME"
 
-    MODE = "training"
+    MODE = "train"
 
     def display(self):
         """Display Configuration values."""
