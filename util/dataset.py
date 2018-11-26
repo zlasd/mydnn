@@ -63,6 +63,7 @@ class CIFAR10(Dataset):
                 = train_test_split(train_X, train_y, test_size=0.2)
 
         print('image shapes: {}'.format(self.train_X[0].shape))
+        print('image data type: {}'.format(self.train_X.dtype))
         print('train sample: {}'.format(self.train_y.shape[0]))
         print('valid sample: {}'.format(self.valid_y.shape[0]))
 

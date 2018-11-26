@@ -43,7 +43,7 @@ class Manager(BaseManager):
                 loss = tf.losses.softmax_cross_entropy(y_, y)
                 self.loss = loss
 
-            equals = tf.equal(tf.arg_max(y, 1), tf.argmax(y_, 1))
+            equals = tf.equal(tf.argmax(y, 1), tf.argmax(y_, 1))
             self.accuracy = tf.reduce_mean(tf.cast(equals, tf.float32))
 
 

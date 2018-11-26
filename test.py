@@ -8,6 +8,8 @@ from models.manager import Manager
 from models.softmax import SoftmaxConfig, softmax
 from models.googlenet import googlenet, GoogLeNetConfig
 
+from convert_to_tfrecord import data_to_tfrecord
+
 def testLoadDataset():
     print('test load datasets...')
 
@@ -43,10 +45,18 @@ def testGoogLeNet():
     manager.compile()
     manager.training()
 
+def testToRecord():
+    cifar10 = CIFAR10('data/')
+    cifar10.loadTrainData()
+    cifar10.loadTestData()
+
+    data_to_tfrecord(cifar10.train_X, cifar10.train_y, "data/train")
+    data_to_tfrecord(cifar10.valid_X, cifar10.valid_y, "data/valid")
+    data_to_tfrecord(cifar10.test_X, cifar10.test_y, "data/test")
 
 def test():
     # testSoftmax()
-    testGoogLeNet()
+    testToRecord()
 
 
 if __name__ == '__main__':
