@@ -8,9 +8,9 @@ I will also use the networks to solve the CIFAR-10 classification problem in ter
 
 ```
 numpy
-matplotlib
+matplotlib (to use imread)
 tensorflow
-scikit-learn
+scikit-learn (to use train_test_split)
 ```
 
 
@@ -32,6 +32,7 @@ The original directories stucture is as follow:
 |   |   +--- ...
 ```
 
+You can download it from [fast.ai](https://course.fast.ai/datasets).
 
 ## Networks
 
