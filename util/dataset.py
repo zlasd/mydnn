@@ -20,7 +20,7 @@ class Dataset(object):
         self.test_dir = os.path.join(data_dir, "test")
         self.classes = []
     
-    def getBatch(self, bs, mode="training"):
+    def getBatch(self, bs, mode="train"):
         return None, None
 
 
