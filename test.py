@@ -8,6 +8,7 @@ from util.cifar10tf import CIFAR10TF
 from models.manager import Manager, ManagerTF
 from models.softmax import SoftmaxConfig, softmax
 from models.googlenet import googlenet, GoogLeNetConfig
+from models.resnet import resnet, ResnetConfig
 
 from convert_to_tfrecord import data_to_tfrecord
 
@@ -83,13 +84,21 @@ def testTFRecord():
     print(X.shape)
     print(y.shape)
 
-    
+def testResnet():
+    conf = ResnetConfig()
+    conf.SAVE_PER_EPOCH = 10
 
+    cifar10 = CIFAR10TF('data/')
+    manager = ManagerTF(conf, cifar10, resnet)
+
+    manager.compile()
+    manager.training()
 
 def test():
     # testSoftmax()
     # testTFRecord()
-    testManagerTF()
+    # testManagerTF()
+    testResnet()
 
 
 if __name__ == '__main__':

@@ -44,9 +44,10 @@ GoogLeNet
 
 ![googlenet](tb_example.png)
 
+ResNet and SENet are added. Some test should be done further.
+
 ## TODO
 
 1. implement InceptionV3
-2. implement ResNet
 3. add another datasets
 4. add object detection task

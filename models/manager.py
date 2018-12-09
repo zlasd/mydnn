@@ -33,7 +33,7 @@ class Manager(BaseManager):
         X = tf.placeholder(tf.float32, shape=( \
                 None, self.dataset.IMAGE_HEIGHT, self.dataset.IMAGE_WIDTH, 3))
         # padding x to upsample
-        X = tf.pad(X, [(0, 0), (32, 32), (32, 32), (0, 0)])
+        # X = tf.pad(X, [(0, 0), (32, 32), (32, 32), (0, 0)])
         y = tf.placeholder(tf.uint8, shape=(None, ))
         return X, y
 
