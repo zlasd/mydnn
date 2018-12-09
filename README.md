@@ -34,6 +34,10 @@ The original directories stucture is as follow:
 
 You can download it from [fast.ai](https://course.fast.ai/datasets).
 
+You can also use ```tf.data.TFRecordDataset```.
+
+Firstly, prepare dataset as above and run ```conver_to_tfrecord.py``` script. Then, you can use ```CIFAR10TF``` and ```ManagerTF``` which use ```tf.data``` pipeline. The usage of those classes can be founded in ```test.py```.
+
 ## Networks
 
 GoogLeNet
@@ -42,10 +46,7 @@ GoogLeNet
 
 ## TODO
 
-1. implement VGGNet
-2. implement InceptionV3
-3. implement ResNet
-4. implement MobileNet
-5. use tensorflow data pipeline
-6. add another datasets
-7. add object detection task
+1. implement InceptionV3
+2. implement ResNet
+3. add another datasets
+4. add object detection task
